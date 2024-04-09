@@ -10,13 +10,18 @@ document.getElementById('history-list').addEventListener('click', function(event
     getWeather(city);
 });
 
+// Load search history from local storage when the page is loaded or refreshed
+window.addEventListener('load', function() {
+    const history = JSON.parse(localStorage.getItem('searchHistory')) || [];
+    history.forEach(function(city) {
+        addToHistory(city);
+    });
+});
+
 function getWeather(city) {
     // Clear previous forecast data
     const forecastContainer = document.getElementById('forecast-container');
     forecastContainer.innerHTML = '';
-
-    // Clear previous search history
-    clearHistory();
 
     fetch(`https://api.openweathermap.org/data/2.5/forecast?q=${city}&appid=${apiKey}`)
         .then(function(response) {
@@ -35,17 +40,14 @@ function getWeather(city) {
         });
 }
 
-
 function displayForecast(data) {
     const forecastList = data.list;
     const forecastContainer = document.getElementById('forecast-container');
     forecastContainer.innerHTML = '';
 
-    // Counter to keep track of the number of forecasts displayed
     let forecastCount = 0;
 
     forecastList.forEach(function(item) {
-        // Stop displaying forecasts after the next five
         if (forecastCount >= 5) {
             return;
         }
@@ -83,20 +85,26 @@ function displayForecast(data) {
 
         forecastContainer.appendChild(forecastItem);
 
-        // Increment the forecast counter
         forecastCount++;
     });
 }
-
 
 function addToHistory(city) {
     const listItem = document.createElement('li');
     listItem.textContent = city;
     document.getElementById('history-list').appendChild(listItem);
+
+    // Add city to local storage
+    const history = JSON.parse(localStorage.getItem('searchHistory')) || [];
+    history.push(city);
+    localStorage.setItem('searchHistory', JSON.stringify(history));
 }
 
 function clearHistory() {
     document.getElementById('history-list').innerHTML = '';
+
+    // Clear search history from local storage
+    localStorage.removeItem('searchHistory');
 }
 
 function displayErrorMessage(message) {
