@@ -7,11 +7,44 @@ document.getElementById('search-btn').addEventListener('click', () => {
 
 function getWeather(city) {
     fetch(`https://api.openweathermap.org/data/2.5/weather?q=${city}&appid=${apiKey}`)
-        .then(response => response.json())
-        .then(data => {
-            document.getElementById('city-name').textContent = data.name;
-            document.getElementById('temperature').textContent = `${Math.round(data.main.temp - 273.15)}°C`;
-            document.getElementById('description').textContent = data.weather[0].description;
+        .then(response => {
+            if (!response.ok) {
+                throw new Error('City not found');
+            }
+            return response.json();
         })
-        .catch(error => console.log('Error fetching weather:', error));
+        .then(data => {
+            displayWeather(data);
+            addToHistory(city);
+        })
+        .catch(error => {
+            console.log('Error fetching weather:', error);
+            displayErrorMessage('Please input an actual city');
+        });
 }
+
+function displayWeather(data) {
+    document.getElementById('city-name').textContent = data.name;
+    const tempCelsius = data.main.temp - 273.15;
+    const tempFahrenheit = (tempCelsius * 9/5) + 32;
+    document.getElementById('temperature').textContent = `${Math.round(tempFahrenheit)}°F`;
+    document.getElementById('description').textContent = data.weather[0].description;
+}
+
+function addToHistory(city) {
+    const listItem = document.createElement('li');
+    listItem.textContent = city;
+    document.getElementById('history-list').appendChild(listItem);
+}
+
+function displayErrorMessage(message) {
+    const errorMessage = document.createElement('p');
+    errorMessage.textContent = message;
+    errorMessage.style.color = 'red';
+    const weatherContainer = document.querySelector('.weather-container');
+    weatherContainer.appendChild(errorMessage);
+    setTimeout(() => {
+        weatherContainer.removeChild(errorMessage);
+    }, 3000);
+}
+
