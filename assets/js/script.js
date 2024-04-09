@@ -41,7 +41,15 @@ function displayForecast(data) {
     const forecastContainer = document.getElementById('forecast-container');
     forecastContainer.innerHTML = '';
 
+    // Counter to keep track of the number of forecasts displayed
+    let forecastCount = 0;
+
     forecastList.forEach(function(item) {
+        // Stop displaying forecasts after the next five
+        if (forecastCount >= 5) {
+            return;
+        }
+
         const date = new Date(item.dt * 1000);
         const options = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' };
         const forecastItem = document.createElement('div');
@@ -74,8 +82,12 @@ function displayForecast(data) {
         forecastItem.appendChild(humidityElement);
 
         forecastContainer.appendChild(forecastItem);
+
+        // Increment the forecast counter
+        forecastCount++;
     });
 }
+
 
 function addToHistory(city) {
     const listItem = document.createElement('li');
