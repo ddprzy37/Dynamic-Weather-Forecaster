@@ -19,17 +19,31 @@ function getWeather(city) {
         })
         .catch(error => {
             console.log('Error fetching weather:', error);
-            displayErrorMessage('Please input an actual city');
+            displayErrorMessage(error.message);
         });
 }
 
 function displayWeather(data) {
     document.getElementById('city-name').textContent = data.name;
-    const tempCelsius = data.main.temp - 273.15;
-    const tempFahrenheit = (tempCelsius * 9/5) + 32;
+    const date = new Date(data.dt * 1000);
+    const options = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' };
+    document.getElementById('date').textContent = date.toLocaleDateString(undefined, options);
+
+    const iconCode = data.weather[0].icon;
+    const iconUrl = `https://openweathermap.org/img/wn/${iconCode}.png`;
+    document.getElementById('weather-icon').src = iconUrl;
+
+    const tempFahrenheit = (data.main.temp - 273.15) * 9/5 + 32;
     document.getElementById('temperature').textContent = `${Math.round(tempFahrenheit)}°F`;
-    document.getElementById('description').textContent = data.weather[0].description;
+
+    document.getElementById('humidity').textContent = `Humidity: ${data.main.humidity}%`;
+
+    // Convert wind speed from m/s to mph
+    const windSpeedMph = data.wind.speed * 2.23694;
+    document.getElementById('wind-speed').textContent = `Wind Speed: ${windSpeedMph.toFixed(2)} mph`;
 }
+
+
 
 function addToHistory(city) {
     const listItem = document.createElement('li');
