@@ -1,9 +1,12 @@
 .weather-container {
-    text-align: center;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
 }
 
 .weather-info {
     margin-top: 20px;
+    text-align: center;
 }
 
 #city-input {
@@ -15,4 +18,41 @@
     margin-top: 10px;
     padding: 5px 10px;
     cursor: pointer;
+}
+
+.forecast-container {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    margin-top: 20px;
+}
+
+.forecast-item {
+    flex-basis: calc(20% - 20px);
+    margin: 10px;
+    padding: 10px;
+    border: 1px solid #ccc;
+    text-align: center;
+}
+
+.search-history {
+    margin-top: 20px;
+}
+
+.search-history ul {
+    list-style-type: none;
+    padding: 0;
+}
+
+.search-history ul li {
+    display: inline-block;
+    margin-right: 10px;
+    cursor: pointer;
+    background-color: #f0f0f0;
+    padding: 5px 10px;
+    border-radius: 5px;
+}
+
+.search-history ul li:hover {
+    background-color: #e0e0e0;
 }

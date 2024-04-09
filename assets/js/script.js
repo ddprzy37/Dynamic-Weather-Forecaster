@@ -1,54 +1,90 @@
 const apiKey = '67678bdb629b68d36147f11bd4b6a739';
 
-document.getElementById('search-btn').addEventListener('click', () => {
+document.getElementById('search-btn').addEventListener('click', function() {
     const city = document.getElementById('city-input').value;
     getWeather(city);
 });
 
+document.getElementById('history-list').addEventListener('click', function(event) {
+    const city = event.target.textContent;
+    getWeather(city);
+});
+
 function getWeather(city) {
-    fetch(`https://api.openweathermap.org/data/2.5/weather?q=${city}&appid=${apiKey}`)
-        .then(response => {
+    // Clear previous forecast data
+    const forecastContainer = document.getElementById('forecast-container');
+    forecastContainer.innerHTML = '';
+
+    // Clear previous search history
+    clearHistory();
+
+    fetch(`https://api.openweathermap.org/data/2.5/forecast?q=${city}&appid=${apiKey}`)
+        .then(function(response) {
             if (!response.ok) {
                 throw new Error('City not found');
             }
             return response.json();
         })
-        .then(data => {
-            displayWeather(data);
+        .then(function(data) {
+            displayForecast(data);
             addToHistory(city);
         })
-        .catch(error => {
+        .catch(function(error) {
             console.log('Error fetching weather:', error);
-            displayErrorMessage(error.message);
+            displayErrorMessage('Please input an actual city');
         });
 }
 
-function displayWeather(data) {
-    document.getElementById('city-name').textContent = data.name;
-    const date = new Date(data.dt * 1000);
-    const options = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' };
-    document.getElementById('date').textContent = date.toLocaleDateString(undefined, options);
 
-    const iconCode = data.weather[0].icon;
-    const iconUrl = `https://openweathermap.org/img/wn/${iconCode}.png`;
-    document.getElementById('weather-icon').src = iconUrl;
+function displayForecast(data) {
+    const forecastList = data.list;
+    const forecastContainer = document.getElementById('forecast-container');
+    forecastContainer.innerHTML = '';
 
-    const tempFahrenheit = (data.main.temp - 273.15) * 9/5 + 32;
-    document.getElementById('temperature').textContent = `${Math.round(tempFahrenheit)}°F`;
+    forecastList.forEach(function(item) {
+        const date = new Date(item.dt * 1000);
+        const options = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' };
+        const forecastItem = document.createElement('div');
+        forecastItem.classList.add('forecast-item');
 
-    document.getElementById('humidity').textContent = `Humidity: ${data.main.humidity}%`;
+        const dateElement = document.createElement('p');
+        dateElement.textContent = date.toLocaleDateString(undefined, options);
+        forecastItem.appendChild(dateElement);
 
-    // Convert wind speed from m/s to mph
-    const windSpeedMph = data.wind.speed * 2.23694;
-    document.getElementById('wind-speed').textContent = `Wind Speed: ${windSpeedMph.toFixed(2)} mph`;
+        const iconCode = item.weather[0].icon;
+        const iconUrl = `https://openweathermap.org/img/wn/${iconCode}.png`;
+        const iconElement = document.createElement('img');
+        iconElement.src = iconUrl;
+        forecastItem.appendChild(iconElement);
+
+        const tempCelsius = item.main.temp - 273.15;
+        const tempFahrenheit = (tempCelsius * 9/5) + 32;
+        const tempElement = document.createElement('p');
+        tempElement.textContent = `Temperature: ${Math.round(tempFahrenheit)}°F`;
+        forecastItem.appendChild(tempElement);
+
+        const windSpeed = item.wind.speed;
+        const windElement = document.createElement('p');
+        windElement.textContent = `Wind Speed: ${windSpeed} m/s`;
+        forecastItem.appendChild(windElement);
+
+        const humidity = item.main.humidity;
+        const humidityElement = document.createElement('p');
+        humidityElement.textContent = `Humidity: ${humidity}%`;
+        forecastItem.appendChild(humidityElement);
+
+        forecastContainer.appendChild(forecastItem);
+    });
 }
-
-
 
 function addToHistory(city) {
     const listItem = document.createElement('li');
     listItem.textContent = city;
     document.getElementById('history-list').appendChild(listItem);
+}
+
+function clearHistory() {
+    document.getElementById('history-list').innerHTML = '';
 }
 
 function displayErrorMessage(message) {
@@ -57,8 +93,7 @@ function displayErrorMessage(message) {
     errorMessage.style.color = 'red';
     const weatherContainer = document.querySelector('.weather-container');
     weatherContainer.appendChild(errorMessage);
-    setTimeout(() => {
+    setTimeout(function() {
         weatherContainer.removeChild(errorMessage);
     }, 3000);
 }
-
