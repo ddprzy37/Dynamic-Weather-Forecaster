@@ -22,17 +22,20 @@
 
 .forecast-container {
     display: flex;
-    flex-wrap: wrap;
-    justify-content: center;
+    flex-wrap: nowrap; /* Prevent wrapping */
+    justify-content: space-between; /* Space items evenly */
+    overflow-x: auto; /* Enable horizontal scrolling if necessary */
     margin-top: 20px;
 }
 
 .forecast-item {
-    flex-basis: calc(20% - 20px);
+    flex-basis: calc(20% - 20px); /* Adjust width to fit all items in one row */
     margin: 10px;
     padding: 10px;
     border: 1px solid #ccc;
     text-align: center;
+    background-color: #0060FA;
+    color: white;
 }
 
 .search-history {
@@ -57,4 +60,6 @@
     background-color: #e0e0e0;
 }
 
-
+body {
+    background-color: skyblue;
+}
