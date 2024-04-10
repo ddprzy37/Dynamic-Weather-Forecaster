@@ -81,9 +81,13 @@ function displayForecast(data) {
             tempElement.textContent = `Temperature: ${Math.round(tempFahrenheit)}°F`;
             forecastItem.appendChild(tempElement);
 
-            const windSpeed = item.wind.speed;
+            // Convert wind speed from m/s to mph
+            const windSpeedMetersPerSecond = item.wind.speed;
+            const windSpeedMilesPerHour = windSpeedMetersPerSecond * 2.237;
+
+            // Create wind speed element with mph value
             const windElement = document.createElement('p');
-            windElement.textContent = `Wind Speed: ${windSpeed} m/s`;
+            windElement.textContent = `Wind Speed: ${windSpeedMilesPerHour.toFixed(2)} mph`;
             forecastItem.appendChild(windElement);
 
             const humidity = item.main.humidity;
@@ -98,6 +102,7 @@ function displayForecast(data) {
         }
     });
 }
+
 
 
 

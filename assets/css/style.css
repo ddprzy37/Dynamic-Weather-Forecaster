@@ -4,9 +4,13 @@
     align-items: center;
 }
 
-.weather-info {
-    margin-top: 20px;
-    text-align: center;
+.weather-info,
+#date,
+#weather-icon,
+#temperature,
+#humidity,
+#wind-speed {
+    display: none;
 }
 
 #city-input {
@@ -42,7 +46,9 @@
     margin-top: 20px;
 }
 
-.search-history ul {
+.search-history ul li:hover {
+    background-color: black;
+    color: white;
     list-style-type: none;
     padding: 0;
 }
